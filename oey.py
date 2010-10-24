@@ -154,7 +154,6 @@ if __name__ == '__main__':
 
 		elif o in ('-s', '--show-parent-deps'):
 			show_parent_deps = True
-			print 'show_parent_deps is True'
 
 		elif o in ('-d', '--depth'):
 			try:
