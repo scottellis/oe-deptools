@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 
-import sys
-
+import sys, getopt
 
 # keyed by package-name, contains the list of package dependencies
 pn = {}
@@ -9,6 +8,7 @@ pn = {}
 # keyed by package-name, contains the list of dependent packages
 rev_pn = {}
 
+show_parent_deps = False
 
 def parse_pn_depends():
 	try:
@@ -47,19 +47,29 @@ def build_reverse_dependencies():
 
 
 def list_packages():
-	print 'All Packages'
-
 	for key in sorted(pn):
 		print key
 
 	print '\n',
 
 
-def list_deps(package):
+def list_deps_recurse(package, parent_deps, depth, max_depth):
+	if depth > max_depth:
+		return;
+
+	if pn.has_key(package):
+		tab_str = '\t' * depth
+
+		for dep in pn[package]:
+			if show_parent_deps or dep not in parent_deps:
+				print tab_str, dep
+				list_deps_recurse(dep, pn[package], depth + 1, max_depth)		
+
+		
+def list_deps(package, max_depth):
 	if pn.has_key(package):
 		print '\nPackage [', package, '] depends on'
-		for dep in pn[package]:
-			print '\t', dep
+		list_deps_recurse(package, (), 1, max_depth)
 
 	elif rev_pn.has_key(package):
 		print 'Package [', package, '] has no dependencies'
@@ -69,12 +79,23 @@ def list_deps(package):
 
 	print '\n',
 	
-	
-def list_reverse_deps(package):
+
+def list_reverse_deps_recurse(package, depth, max_depth):
+	if depth > max_depth:
+		return;
+
+	if rev_pn.has_key(package):
+		tab_str = '\t' * depth
+
+		for dep in rev_pn[package]:
+			print tab_str, dep
+			list_reverse_deps_recurse(dep, depth + 1, max_depth)
+
+
+def list_reverse_deps(package, max_depth):
 	if rev_pn.has_key(package):
 		print '\nPackage [', package, '] is needed by'
-		for needs in rev_pn[package]:
-			print '\t', needs
+		list_reverse_deps_recurse(package, 1, max_depth)
 	
 	elif pn.has_key(package):
 		print 'No package depends on [', package, ']'
@@ -87,14 +108,22 @@ def list_reverse_deps(package):
 
 
 def usage():
-	print '\nUsage: %s [package-name | -h]' % (sys.argv[0])
-	print 'The program uses the pn-depends.dot file for its raw data.'
-	print 'Generate a pn-depends.dot file by running bitbake -g <some-recipe>.\n'
-	print 'Run with no arguments to get a list all packages <some-recipe> depends on.'
-	print 'Run with a package-name to get a list of dependencies and dependent packages'
-	print 'for an individual package.'
-	print '-h or (--help) prints this help message'
-	print '\n',
+	print '\nUsage: %s [options] [package]\n' % (sys.argv[0])
+	print 'Displays OE build dependencies for a given package or recipe.'
+	print 'Uses the pn-depends.dot file for its raw data.'
+	print 'Generate a pn-depends.dot file by running bitbake -g <recipe>.\n'
+	print 'Options:'
+	print '-h, --help\tShow this help message and exit'
+	print '-r, --reverse-deps'
+	print '\t\tShow reverse dependencies, i.e. packages dependent on package'
+	print '-d <depth>, --depth=<depth'
+	print '\t\tMaximum depth to follow dependencies, default is infinite'
+	print '-s, --show-parent-deps'
+	print '\t\tShow child package dependencies that are already listed'
+	print '\t\tas direct parent dependencies.\n'
+	print "Provide a package name from the generated pn-depends.dot file."
+	print 'Run the program without a package name to get a list of'
+	print 'available package names.\n'
 
 
 if __name__ == '__main__':
@@ -102,12 +131,48 @@ if __name__ == '__main__':
 	parse_pn_depends()
 	build_reverse_dependencies()
 
-	if len(sys.argv) > 1:
-		if sys.argv[1] == '-h' or sys.argv[1] == '--help':
+	try:
+		opts, args = getopt.getopt(sys.argv[1:], 'hrd:s', 
+						['help', 'reverse-deps', 'depth=', 'show-parent-deps'])
+
+	except getopt.GetoptError, err:
+		print str(err)
+		usage()
+		sys.exit(2)
+
+
+	depth = 1000
+	reverse = False
+
+	for o, a in opts:
+		if o in ('-h', '--help'):
 			usage()
+			sys.exit()
+
+		elif o in ('-r', '--reverse-deps'):
+			reverse = True
+
+		elif o in ('-s', '--show-parent-deps'):
+			show_parent_deps = True
+			print 'show_parent_deps is True'
+
+		elif o in ('-d', '--depth'):
+			try:
+				depth = int(a, 10)
+			except ValueError:
+				print 'Bad depth argument: ', a
+				usage()
+				sys.exit(1)
+
 		else:
-			list_deps(sys.argv[1])
-			list_reverse_deps(sys.argv[1])
+			assert False, 'unhandled option'
+
+
+	if len(args) > 0:
+		if reverse:
+			list_reverse_deps(args[0], depth)
+		else:
+			list_deps(args[0], depth)
 
 	else:
 		list_packages()
