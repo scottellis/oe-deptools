@@ -80,6 +80,40 @@ def list_deps(package, max_depth):
 	print '\n',
 	
 
+def collect_deps_flat(d, package, depth, max_depth):
+	if package in d:
+		return;
+
+	d.append(package)
+
+	if depth > max_depth:
+		return;
+
+	if pn.has_key(package):
+		for dep in pn[package]:
+			collect_deps_flat(d, dep, depth + 1, max_depth)
+
+
+def list_deps_flat(package, max_depth):
+	d = []
+
+	if pn.has_key(package):
+		for dep in pn[package]:
+			collect_deps_flat(d, package, 1, max_depth)
+
+		print '\nPackage [', package, '] depends on'
+		for dep in sorted(d):
+			print '\t', dep
+
+	elif rev_pn.has_key(package):
+		print 'Package [', package, '] has no dependencies'
+
+	else:
+		print 'Package [', package, '] not found'
+
+	print '\n',
+	
+
 def list_reverse_deps_recurse(package, depth, max_depth):
 	if depth > max_depth:
 		return;
@@ -116,6 +150,7 @@ def usage():
 	print '-h, --help\tShow this help message and exit'
 	print '-r, --reverse-deps'
 	print '\t\tShow reverse dependencies, i.e. packages dependent on package'
+	print '-f, --flat\tFlat output instead of default tree output'
 	print '-d <depth>, --depth=<depth'
 	print '\t\tMaximum depth to follow dependencies, default is infinite'
 	print '-s, --show-parent-deps'
@@ -132,8 +167,8 @@ if __name__ == '__main__':
 	build_reverse_dependencies()
 
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], 'hrd:s', 
-						['help', 'reverse-deps', 'depth=', 'show-parent-deps'])
+		opts, args = getopt.getopt(sys.argv[1:], 'hrfd:s', 
+						['help', 'reverse-deps', 'flat', 'depth=', 'show-parent-deps'])
 
 	except getopt.GetoptError, err:
 		print str(err)
@@ -143,6 +178,7 @@ if __name__ == '__main__':
 
 	depth = 1000
 	reverse = False
+	flat = False
 
 	for o, a in opts:
 		if o in ('-h', '--help'):
@@ -151,6 +187,9 @@ if __name__ == '__main__':
 
 		elif o in ('-r', '--reverse-deps'):
 			reverse = True
+
+		elif o in ('-f', '--flat'):
+			flat = True
 
 		elif o in ('-s', '--show-parent-deps'):
 			show_parent_deps = True
@@ -169,9 +208,15 @@ if __name__ == '__main__':
 
 	if len(args) > 0:
 		if reverse:
+#			if flat:
+#				list_reverse_deps_flat[args[0], depth)
+#			else:
 			list_reverse_deps(args[0], depth)
 		else:
-			list_deps(args[0], depth)
+			if flat:
+				list_deps_flat(args[0], depth)
+			else:
+				list_deps(args[0], depth)
 
 	else:
 		list_packages()
