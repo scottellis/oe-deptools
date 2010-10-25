@@ -60,7 +60,7 @@ def list_deps_recurse(package, parent_deps, depth, max_depth):
 	if pn.has_key(package):
 		tab_str = '\t' * depth
 
-		for dep in pn[package]:
+		for dep in sorted(pn[package]):
 			if show_parent_deps or dep not in parent_deps:
 				print tab_str, dep
 				list_deps_recurse(dep, pn[package], depth + 1, max_depth)		
@@ -81,17 +81,14 @@ def list_deps(package, max_depth):
 	
 
 def collect_deps_flat(d, package, depth, max_depth):
-	if package in d:
-		return;
-
-	d.append(package)
-
 	if depth > max_depth:
 		return;
 
 	if pn.has_key(package):
 		for dep in pn[package]:
-			collect_deps_flat(d, dep, depth + 1, max_depth)
+			if dep not in d:
+				d.append(dep)
+				collect_deps_flat(d, dep, depth + 1, max_depth)
 
 
 def list_deps_flat(package, max_depth):
@@ -99,7 +96,9 @@ def list_deps_flat(package, max_depth):
 
 	if pn.has_key(package):
 		for dep in pn[package]:
-			collect_deps_flat(d, package, 1, max_depth)
+			if dep not in d:
+				d.append(dep)
+				collect_deps_flat(d, dep, 2, max_depth)
 
 		print '\nPackage [', package, '] depends on'
 		for dep in sorted(d):
@@ -121,7 +120,7 @@ def list_reverse_deps_recurse(package, depth, max_depth):
 	if rev_pn.has_key(package):
 		tab_str = '\t' * depth
 
-		for dep in rev_pn[package]:
+		for dep in sorted(rev_pn[package]):
 			print tab_str, dep
 			list_reverse_deps_recurse(dep, depth + 1, max_depth)
 
@@ -140,6 +139,37 @@ def list_reverse_deps(package, max_depth):
 	print '\n',
 
 
+def collect_reverse_deps_flat(d, package, depth, max_depth):
+	if depth > max_depth:
+		return;
+
+	if rev_pn.has_key(package):
+		for dep in rev_pn[package]:
+			if dep not in d:
+				d.append(dep)
+				collect_reverse_deps_flat(d, dep, depth + 1, max_depth)
+
+def list_reverse_deps_flat(package, max_depth):
+	d = []
+
+	if rev_pn.has_key(package):
+		for dep in rev_pn[package]:
+			if dep not in d:
+				d.append(dep)
+				collect_reverse_deps_flat(d, dep, 2, max_depth)
+
+		print '\nPackage [', package, '] is needed by'
+		for dep in sorted(d):
+			print '\t', dep
+
+	elif rev_pn.has_key(package):
+		print 'No package depends on [', package, ']'
+
+	else:
+		print 'Package [', package, '] not found'
+
+	print '\n',
+
 
 def usage():
 	print '\nUsage: %s [options] [package]\n' % (sys.argv[0])
@@ -150,7 +180,7 @@ def usage():
 	print '-h, --help\tShow this help message and exit'
 	print '-r, --reverse-deps'
 	print '\t\tShow reverse dependencies, i.e. packages dependent on package'
-	print '-f, --flat\tFlat output instead of default tree output'
+	print '-t, --tree\tTree output instead of default flat output'
 	print '-d <depth>, --depth=<depth'
 	print '\t\tMaximum depth to follow dependencies, default is infinite'
 	print '-s, --show-parent-deps'
@@ -167,8 +197,8 @@ if __name__ == '__main__':
 	build_reverse_dependencies()
 
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], 'hrfd:s', 
-						['help', 'reverse-deps', 'flat', 'depth=', 'show-parent-deps'])
+		opts, args = getopt.getopt(sys.argv[1:], 'hrtd:s', 
+						['help', 'reverse-deps', 'tree', 'depth=', 'show-parent-deps'])
 
 	except getopt.GetoptError, err:
 		print str(err)
@@ -178,7 +208,7 @@ if __name__ == '__main__':
 
 	depth = 1000
 	reverse = False
-	flat = False
+	flat = True
 
 	for o, a in opts:
 		if o in ('-h', '--help'):
@@ -188,8 +218,8 @@ if __name__ == '__main__':
 		elif o in ('-r', '--reverse-deps'):
 			reverse = True
 
-		elif o in ('-f', '--flat'):
-			flat = True
+		elif o in ('-t', '--tree'):
+			flat = False
 
 		elif o in ('-s', '--show-parent-deps'):
 			show_parent_deps = True
@@ -208,10 +238,10 @@ if __name__ == '__main__':
 
 	if len(args) > 0:
 		if reverse:
-#			if flat:
-#				list_reverse_deps_flat[args[0], depth)
-#			else:
-			list_reverse_deps(args[0], depth)
+			if flat:
+				list_reverse_deps_flat(args[0], depth)
+			else:
+				list_reverse_deps(args[0], depth)
 		else:
 			if flat:
 				list_deps_flat(args[0], depth)
