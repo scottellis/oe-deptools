@@ -2,6 +2,5 @@ Some miscellaneous tools for working with OpenEmbedded and bitbake
 generated files.
 
 oey.py - A program to answer the question, "Why is OE building that!?!"
-         Need to add a -f flat option instead of the default tree listing.
 
 More to come. 
