@@ -80,6 +80,32 @@ def list_deps(package, max_depth):
 	print '\n',
 	
 
+def list_reverse_deps_recurse(package, depth, max_depth):
+	if depth > max_depth:
+		return;
+
+	if rev_pn.has_key(package):
+		tab_str = '\t' * depth
+
+		for dep in sorted(rev_pn[package]):
+			print tab_str, dep
+			list_reverse_deps_recurse(dep, depth + 1, max_depth)
+
+
+def list_reverse_deps(package, max_depth):
+	if rev_pn.has_key(package):
+		print '\nPackage [', package, '] is needed by'
+		list_reverse_deps_recurse(package, 1, max_depth)
+	
+	elif pn.has_key(package):
+		print 'No package depends on [', package, ']'
+	
+	else:
+		print 'Package [', package, '] not found'
+
+	print '\n',
+
+
 def collect_deps_flat(src, d, package, depth, max_depth):
 	if depth > max_depth:
 		return;
@@ -111,43 +137,7 @@ def list_deps_flat(package, max_depth):
 		print 'Package [', package, '] not found'
 
 	print '\n',
-	
 
-def list_reverse_deps_recurse(package, depth, max_depth):
-	if depth > max_depth:
-		return;
-
-	if rev_pn.has_key(package):
-		tab_str = '\t' * depth
-
-		for dep in sorted(rev_pn[package]):
-			print tab_str, dep
-			list_reverse_deps_recurse(dep, depth + 1, max_depth)
-
-
-def list_reverse_deps(package, max_depth):
-	if rev_pn.has_key(package):
-		print '\nPackage [', package, '] is needed by'
-		list_reverse_deps_recurse(package, 1, max_depth)
-	
-	elif pn.has_key(package):
-		print 'No package depends on [', package, ']'
-	
-	else:
-		print 'Package [', package, '] not found'
-
-	print '\n',
-
-
-def collect_reverse_deps_flat(d, package, depth, max_depth):
-	if depth > max_depth:
-		return;
-
-	if rev_pn.has_key(package):
-		for dep in rev_pn[package]:
-			if dep not in d:
-				d.append(dep)
-				collect_reverse_deps_flat(d, dep, depth + 1, max_depth)
 
 def list_reverse_deps_flat(package, max_depth):
 	d = []
