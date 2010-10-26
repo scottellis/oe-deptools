@@ -10,6 +10,8 @@ rev_pn = {}
 
 show_parent_deps = False
 
+indent_str = '\t'
+
 def parse_pn_depends():
 	try:
 		fh = open('pn-depends.dot')
@@ -58,7 +60,7 @@ def list_deps_recurse(package, parent_deps, depth, max_depth):
 		return;
 
 	if pn.has_key(package):
-		tab_str = '\t' * depth
+		tab_str = indent_str * depth
 
 		for dep in sorted(pn[package]):
 			if show_parent_deps or dep not in parent_deps:
@@ -85,7 +87,7 @@ def list_reverse_deps_recurse(package, depth, max_depth):
 		return;
 
 	if rev_pn.has_key(package):
-		tab_str = '\t' * depth
+		tab_str = indent_str * depth
 
 		for dep in sorted(rev_pn[package]):
 			print tab_str, dep
