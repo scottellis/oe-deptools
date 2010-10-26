@@ -80,15 +80,15 @@ def list_deps(package, max_depth):
 	print '\n',
 	
 
-def collect_deps_flat(d, package, depth, max_depth):
+def collect_deps_flat(src, d, package, depth, max_depth):
 	if depth > max_depth:
 		return;
 
-	if pn.has_key(package):
-		for dep in pn[package]:
+	if src.has_key(package):
+		for dep in src[package]:
 			if dep not in d:
 				d.append(dep)
-				collect_deps_flat(d, dep, depth + 1, max_depth)
+				collect_deps_flat(src, d, dep, depth + 1, max_depth)
 
 
 def list_deps_flat(package, max_depth):
@@ -98,7 +98,7 @@ def list_deps_flat(package, max_depth):
 		for dep in pn[package]:
 			if dep not in d:
 				d.append(dep)
-				collect_deps_flat(d, dep, 2, max_depth)
+				collect_deps_flat(pn, d, dep, 2, max_depth)
 
 		print '\nPackage [', package, '] depends on'
 		for dep in sorted(d):
@@ -156,7 +156,7 @@ def list_reverse_deps_flat(package, max_depth):
 		for dep in rev_pn[package]:
 			if dep not in d:
 				d.append(dep)
-				collect_reverse_deps_flat(d, dep, 2, max_depth)
+				collect_deps_flat(rev_pn, d, dep, 2, max_depth)
 
 		print '\nPackage [', package, '] is needed by'
 		for dep in sorted(d):
