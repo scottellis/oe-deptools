@@ -152,7 +152,7 @@ def list_reverse_deps_flat(package, max_depth):
 		for dep in sorted(d):
 			print '\t', dep
 
-	elif rev_pn.has_key(package):
+	elif pn.has_key(package):
 		print 'No package depends on [', package, ']'
 
 	else:
