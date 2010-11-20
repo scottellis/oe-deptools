@@ -29,7 +29,10 @@ def parse_pn_depends():
 		line = line.rstrip()
 		fields = line.split(' ')
 
-		if (len(fields) == 3 and fields[1] == '->'):
+		if len(fields) < 3 or fields[1] != '->':
+			continue
+
+		if fields[0] != fields[2]:
 			name = fields[0][1:-1]
 			depend = fields[2][1:-1]
 
