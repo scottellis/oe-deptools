@@ -9,6 +9,7 @@ pn = {}
 rev_pn = {}
 
 show_parent_deps = False
+show_verbose_messages = False
 
 indent_str = '\t'
 
@@ -32,7 +33,7 @@ def parse_pn_depends():
 		if len(fields) < 3 or fields[1] != '->':
 			continue
 
-		if fields[0] != fields[2]:
+		if len(fields) == 3:
 			name = fields[0][1:-1]
 			depend = fields[2][1:-1]
 
@@ -40,6 +41,27 @@ def parse_pn_depends():
 				pn[name] = []
 
 			pn[name].append(depend)
+
+		elif len(fields) == 4:	
+			if fields[0] == fields[2]:
+				continue
+
+			name = fields[0][1:-1]
+			depend = fields[2][1:-1]
+
+			if pn.has_key(depend) and name in pn[depend]:
+				if show_verbose_messages:
+					print '\n*** Found loop dependency'
+					print '\t', name, '->', depend
+					print '\t', depend, '->', name, '\n'
+
+				continue
+
+			if not pn.has_key(name):
+				pn[name] = []
+				pn[name].append(depend)
+			elif not depend in pn[name]:
+				pn[name].append(depend)
 
 
 def build_reverse_dependencies():
@@ -173,6 +195,7 @@ def usage():
 	print 'Generate a pn-depends.dot file by running bitbake -g <recipe>.\n'
 	print 'Options:'
 	print '-h, --help\tShow this help message and exit'
+	print '-v, --verbose\tShow error messages such as recursive dependencies'
 	print '-r, --reverse-deps'
 	print '\t\tShow reverse dependencies, i.e. packages dependent on package'
 	print '-t, --tree\tTree output instead of default flat output'
@@ -188,12 +211,9 @@ def usage():
 
 if __name__ == '__main__':
 
-	parse_pn_depends()
-	build_reverse_dependencies()
-
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], 'hrtd:s', 
-						['help', 'reverse-deps', 'tree', 'depth=', 'show-parent-deps'])
+		opts, args = getopt.getopt(sys.argv[1:], 'hvrtd:s', 
+						['help', 'verbose', 'reverse-deps', 'tree', 'depth=', 'show-parent-deps'])
 
 	except getopt.GetoptError, err:
 		print str(err)
@@ -209,6 +229,9 @@ if __name__ == '__main__':
 		if o in ('-h', '--help'):
 			usage()
 			sys.exit()
+
+		elif o in ('-v', '--verbose'):
+			show_verbose_messages = True
 
 		elif o in ('-r', '--reverse-deps'):
 			reverse = True
@@ -230,6 +253,9 @@ if __name__ == '__main__':
 		else:
 			assert False, 'unhandled option'
 
+
+	parse_pn_depends()
+	build_reverse_dependencies()
 
 	if len(args) > 0:
 		if reverse:
