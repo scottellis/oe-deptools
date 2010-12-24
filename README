@@ -34,7 +34,7 @@ available package names.
 # Install the program by checking it out from github.
 
 ~$ git clone git://github.com/scottellis/oe-deptools.git
-~/overo-oe$ cp ~/oe-deptools/oey.py ~/overo-oe
+~$ cp ~/oe-deptools/oey.py ~/overo-oe
 ~/overo-oe$ cd ~/overo-oe
 
 # For data the program uses the dependency tree that bitbake generates with
@@ -107,11 +107,12 @@ Package [ openjade-native ] is needed by
 It's just a quick hack, but I find it useful on occasion. 
 
 My big win using this was eliminating X completely from console builds, 
-something that had nagged me for awhile. Not just deployment elimination, but 
-no more X compiles during the build because of dependencies. I can now build a 
-console image from a clean OETMP in about 30 minutes, down from around 1 hour. 
+something that had nagged me for awhile. Not just deployment elimination, 
+but no more X compiles at all during the build. I can now build a minimal
+console image from a clean OETMP in about 30 minutes, down from around one
+hour. 
 
-There are a plenty of things you could add to improve this script. Wildcard 
-matches would be a nice start.
+There are a plenty of things you could add to improve this script. 
+Wildcard matches would be a nice start.
 
 
