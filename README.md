@@ -33,7 +33,7 @@ Help
 
     Options:
     -h, --help	        Show this help message and exit
-    -v, --verbose	Show error messages such as recursive dependencies
+    -v, --verbose       Show error messages such as recursive dependencies
     -r, --reverse-deps  Show reverse dependencies, i.e. packages dependent on package
     -t, --tree          Tree output instead of default flat output
     -d <depth>, --depth=<depth> 
