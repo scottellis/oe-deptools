@@ -12,12 +12,16 @@ You can get oe-deptools by saying:
     git clone git://github.com/scottellis/oe-deptools.git
 
 Installing is just a matter of copying the python script oey.py
-to the top of your OE working directory. The same location that
-you run bitbake commands.
+to a convenient location. 
+
+The script is hard-coded to look for the data file in the current
+working directory. A good choice is to the script to the top of 
+your OE working directory, the same location that you run bitbake 
+commands.
 
 For gumstix users, this should work
 
-    cp ~/oe-deptools/oey.py ~/overo-oe
+    cp ~/oe-deptools/oey.py ~/overo-oe/
 
 
 Help
@@ -54,7 +58,7 @@ The oey.py script uses the dependency tree that bitbake generates with
 the --graphviz option. 
 
 You can generate a dependency list for a particular package or a whole image
-at once. Don't worry it doesn't take long.
+at once. Don't worry, even for an image recipe this doesn't take too long.
 
     ~/overo-oe$ bitbake -g omap3-console-image
 
