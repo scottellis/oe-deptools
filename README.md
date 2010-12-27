@@ -106,6 +106,11 @@ The raw data files were generated using bitbake -g omap3-console-image.
             virtual/arm-angstrom-linux-gnueabi-gcc
             virtual/libc
 
+This shows the iputils dependency on openjade-native through the docbook
+dependency.
+
+Now see if any other packages require openjade.
+
 #### Check the reverse dependencies of openjade-native, flat format
 
     ~/overo-oe$ ./oey.py -r openjade-native
@@ -116,6 +121,8 @@ The raw data files were generated using bitbake -g omap3-console-image.
             omap3-console-image
             task-proper-tools
 
+Four packages depend on openjade, but now see if they are related.
+
 #### Check the reverse dependencies of openjade-native, tree format
 
     ~/overo-oe$ ./oey.py -t -r openjade-native
@@ -125,6 +132,9 @@ The raw data files were generated using bitbake -g omap3-console-image.
                     iputils
                             task-proper-tools
                                     omap3-console-image
+
+
+So elminating openjade from docbook-utils-native should work.
 
 
 Notes
