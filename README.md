@@ -15,9 +15,9 @@ Installing is just a matter of copying the python script oey.py
 to a convenient location. 
 
 The script is hard-coded to look for the data file in the current
-working directory. A good choice is to the script to the top of 
-your OE working directory, the same location that you run bitbake 
-commands.
+working directory. A good choice is to copy the script to the top 
+of your OE working directory, the same location that you run bitbake 
+commands. This is where the data files get generated.
 
 For gumstix users, this should work
 
