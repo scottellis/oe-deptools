@@ -72,7 +72,7 @@ to build because of a problem with openjade. The question was why was openjade
 getting. There was nothing about openjade in the iputils recipe.
 
 
-##### Check what packages iputils requires, tree format, three levels deep
+#### Check what packages iputils requires, tree format, three levels deep
 
     ~/overo-oe$ ./oey.py -t -d3 iputils
 
@@ -128,10 +128,10 @@ getting. There was nothing about openjade in the iputils recipe.
 Notes
 -------
 
-The script is just a quick hack, but I find it useful on occasion. 
+The script is just a quick hack, but it is occasionally useful.
 
 My big win with it was eliminating X completely from console builds, 
-something that had nagged me for awhile. Not just deployment elimination, 
+something that had nagged me for awhile. And not just deployment elimination, 
 but no more X compiles at all during the build. I can now build a minimal
 console image from a clean OETMP in about 30 minutes, down from around one
 hour. 
