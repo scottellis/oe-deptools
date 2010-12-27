@@ -84,11 +84,11 @@ The raw data files were generated using bitbake -g omap3-console-image.
                     autoconf-native
                             m4-native
                     automake-native
-			    perl-native-runtime
-		    docbook-dsssl-stylesheets-native
-			    sgml-common-native
-		    docbook-sgml-dtd-3.1-native
-			    sgml-common-native
+                            perl-native-runtime
+                    docbook-dsssl-stylesheets-native
+                            sgml-common-native
+                    docbook-sgml-dtd-3.1-native
+                            sgml-common-native
                     gnu-config-native
                     help2man-native
                     libtool-native
