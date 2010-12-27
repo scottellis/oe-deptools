@@ -74,7 +74,7 @@ being built. There was nothing about openjade in the iputils recipe.
 The raw data files were generated using bitbake -g omap3-console-image.
 
 
-#### Check what packages iputils requires, tree format, three levels deep
+#### Dependencies of iputils, tree format, three levels deep
 
     ~/overo-oe$ ./oey.py -t -d3 iputils
 
@@ -111,7 +111,7 @@ dependency.
 
 Now see if any other packages require openjade.
 
-#### Check the reverse dependencies of openjade-native, flat format
+#### Reverse dependencies of openjade-native, flat format
 
     ~/overo-oe$ ./oey.py -r openjade-native
 
@@ -123,7 +123,7 @@ Now see if any other packages require openjade.
 
 Four packages depend on openjade, but now see if they are related.
 
-#### Check the reverse dependencies of openjade-native, tree format
+#### Reverse dependencies of openjade-native, tree format
 
     ~/overo-oe$ ./oey.py -t -r openjade-native
 
