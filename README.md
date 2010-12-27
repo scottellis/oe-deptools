@@ -69,7 +69,9 @@ Example
 
 I took a question from the gumstix dev list. The problem was iputils failing
 to build because of a problem with openjade. The question was why was openjade 
-getting. There was nothing about openjade in the iputils recipe.
+being built. There was nothing about openjade in the iputils recipe.
+
+The raw data files wer generated using bitbake -g omap3-console-image.
 
 
 #### Check what packages iputils requires, tree format, three levels deep
@@ -114,7 +116,7 @@ getting. There was nothing about openjade in the iputils recipe.
             omap3-console-image
             task-proper-tools
 
-##### Check the reverse dependencies of openjade-native, tree format
+#### Check the reverse dependencies of openjade-native, tree format
 
     ~/overo-oe$ ./oey.py -t -r openjade-native
 
