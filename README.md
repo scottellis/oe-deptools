@@ -71,7 +71,7 @@ I took a question from the gumstix dev list. The problem was iputils failing
 to build because of a problem with openjade. The question was why was openjade 
 being built. There was nothing about openjade in the iputils recipe.
 
-The raw data files wer generated using bitbake -g omap3-console-image.
+The raw data files were generated using bitbake -g omap3-console-image.
 
 
 #### Check what packages iputils requires, tree format, three levels deep
@@ -130,7 +130,7 @@ The raw data files wer generated using bitbake -g omap3-console-image.
 Notes
 -------
 
-The script is just a quick hack, but it is occasionally useful.
+The script is a quick hack, but occasionally useful.
 
 My big win with it was eliminating X completely from console builds, 
 something that had nagged me for awhile. And not just deployment elimination, 
