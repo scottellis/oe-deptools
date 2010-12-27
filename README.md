@@ -134,7 +134,7 @@ Four packages depend on openjade, but now see if they are related.
                                     omap3-console-image
 
 
-So elminating openjade from docbook-utils-native should work.
+So there really is only one dependency on openjade.
 
 
 Notes
