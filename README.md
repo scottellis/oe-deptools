@@ -72,7 +72,7 @@ to build because of a problem with openjade. The question was why was openjade
 getting. There was nothing about openjade in the iputils recipe.
 
 
-# Check what packages iputils requires, tree format, three levels deep
+##### Check what packages iputils requires, tree format, three levels deep
 
     ~/overo-oe$ ./oey.py -t -d3 iputils
 
@@ -104,7 +104,7 @@ getting. There was nothing about openjade in the iputils recipe.
             virtual/arm-angstrom-linux-gnueabi-gcc
             virtual/libc
 
-# Check the reverse dependencies of openjade-native, flat format
+#### Check the reverse dependencies of openjade-native, flat format
 
     ~/overo-oe$ ./oey.py -r openjade-native
 
@@ -114,7 +114,7 @@ getting. There was nothing about openjade in the iputils recipe.
             omap3-console-image
             task-proper-tools
 
-# Check the reverse dependencies of openjade-native, tree format
+##### Check the reverse dependencies of openjade-native, tree format
 
     ~/overo-oe$ ./oey.py -t -r openjade-native
 
