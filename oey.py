@@ -194,16 +194,13 @@ def usage():
 	print 'Uses the pn-depends.dot file for its raw data.'
 	print 'Generate a pn-depends.dot file by running bitbake -g <recipe>.\n'
 	print 'Options:'
-	print '-h, --help\tShow this help message and exit'
-	print '-v, --verbose\tShow error messages such as recursive dependencies'
-	print '-r, --reverse-deps'
-	print '\t\tShow reverse dependencies, i.e. packages dependent on package'
-	print '-t, --tree\tTree output instead of default flat output'
-	print '-d <depth>, --depth=<depth'
-	print '\t\tMaximum depth to follow dependencies, default is infinite'
-	print '-s, --show-parent-deps'
-	print '\t\tShow child package dependencies that are already listed'
-	print '\t\tas direct parent dependencies.\n'
+	print '-h\tShow this help message and exit'
+	print '-v\tShow error messages such as recursive dependencies'
+	print '-r\tShow reverse dependencies, i.e. packages dependent on package'
+	print '-f\tFlat output instead of default tree output'
+	print '-d <depth>\tMaximum depth to follow dependencies, default and max is 10'
+	print '-s\tShow child package dependencies that are already listed'
+	print '\tas direct parent dependencies.\n'
 	print "Provide a package name from the generated pn-depends.dot file."
 	print 'Run the program without a package name to get a list of'
 	print 'available package names.\n'
@@ -212,8 +209,7 @@ def usage():
 if __name__ == '__main__':
 
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], 'hvrtd:s', 
-						['help', 'verbose', 'reverse-deps', 'tree', 'depth=', 'show-parent-deps'])
+		opts, args = getopt.getopt(sys.argv[1:], 'hvrfd:s')
 
 	except getopt.GetoptError, err:
 		print str(err)
@@ -221,28 +217,28 @@ if __name__ == '__main__':
 		sys.exit(2)
 
 
-	depth = 1000
+	depth = 10
 	reverse = False
-	flat = True
+	flat = False
 
 	for o, a in opts:
-		if o in ('-h', '--help'):
+		if o in ('-h'):
 			usage()
 			sys.exit()
 
-		elif o in ('-v', '--verbose'):
+		elif o in ('-v'):
 			show_verbose_messages = True
 
-		elif o in ('-r', '--reverse-deps'):
+		elif o in ('-r'):
 			reverse = True
 
-		elif o in ('-t', '--tree'):
-			flat = False
+		elif o in ('-f'):
+			flat = True
 
-		elif o in ('-s', '--show-parent-deps'):
+		elif o in ('-s'):
 			show_parent_deps = True
 
-		elif o in ('-d', '--depth'):
+		elif o in ('-d'):
 			try:
 				depth = int(a, 10)
 			except ValueError:
@@ -253,6 +249,10 @@ if __name__ == '__main__':
 		else:
 			assert False, 'unhandled option'
 
+
+	if depth > 10:
+		print 'Limiting depth to 10 levels'
+		depth = 10
 
 	parse_pn_depends()
 	build_reverse_dependencies()
