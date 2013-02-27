@@ -4,63 +4,57 @@
 Tools for working with OpenEmbedded.
 
 
-Installing
+  Installing
 -------
 
-You can get oe-deptools by saying:
+You can get oe-deptools with git:
 
-    git clone git://github.com/scottellis/oe-deptools.git
+        git clone git://github.com/scottellis/oe-deptools.git
+
 
 Installing is just a matter of copying the python script oey.py
 to a convenient location. 
 
 The script is hard-coded to look for the data file in the current
-working directory. A good choice is to copy the script to the top 
-of your OE working directory, the same location that you run bitbake 
-commands. This is where the data files get generated.
-
-For gumstix users, this should work
-
-    cp ~/oe-deptools/oey.py ~/overo-oe/
+working directory so I just copy it to wherever I'm running builds.
 
 
-Help
+  Help
 -------
 
-    ./oey.py --help
+        ./oey.py -h
 
-    Usage: ./oey.py [options] [package]
+        Usage: ./oey.py [options] [package]
 
-    Displays OE build dependencies for a given package or recipe.
-    Uses the pn-depends.dot file for its raw data.
-    Generate a pn-depends.dot file by running bitbake -g <recipe>.
+        Displays OE build dependencies for a given package or recipe.
+        Uses the pn-depends.dot file for its raw data.
+        Generate a pn-depends.dot file by running bitbake -g <recipe>.
 
-    Options:
-    -h, --help	        Show this help message and exit
-    -v, --verbose       Show error messages such as recursive dependencies
-    -r, --reverse-deps  Show reverse dependencies, i.e. packages dependent on package
-    -t, --tree          Tree output instead of default flat output
-    -d <depth>, --depth=<depth> 
-                        Maximum depth to follow dependencies, default is infinite
-    -s, --show-parent-deps
-                        Show child package dependencies that are already listed
-                        as direct parent dependencies.
+        Options:
+        -h      Show this help message and exit
+        -v      Show error messages such as recursive dependencies
+        -r      Show reverse dependencies, i.e. packages dependent on package
+        -f      Flat output instead of default tree output
+        -d <depth>      Maximum depth to follow dependencies, default and max is 10
+        -s      Show child package dependencies that are already listed
+                as direct parent dependencies.
 
-    Provide a package name from the generated pn-depends.dot file.
-    Run the program without a package name to get a list of
-    available package names.
+        Provide a package name from the generated pn-depends.dot file.
+        Run the program without a package name to get a list of
+        available package names.
 
 
-Generating Data
+
+  Generating Data
 -------
 
 The oey.py script uses the dependency tree that bitbake generates with
-the --graphviz option. 
+the --graphviz or -g option. 
 
 You can generate a dependency list for a particular package or a whole image
-at once. Don't worry, even for an image recipe this doesn't take too long.
+at once. This doesn't take long even for an image recipe.
 
-    ~/overo-oe$ bitbake -g omap3-console-image
+        ~/jumpnow/build$ bitbake -g jumpnow-console-image
 
 
 Three dot files will be generated - pn-depends.dot, task-depends.dot and
@@ -68,91 +62,35 @@ package-depends.dot.
 
 The oey.py script uses the pn-depends.dot for its data.
 
-Example
+
+  Example
 -------
 
-I took a question from the gumstix dev list. The problem was iputils failing
-to build because of a problem with openjade. The question was why was openjade 
-being built. There was nothing about openjade in the iputils recipe.
+        scott@hex:~/jumpnow/build$ ./oey.py -r boost
 
-The raw data files were generated using bitbake -g omap3-console-image.
+        Package [ boost ] is needed by
+                libzypp
+                        zypper
+                                jumpnow-console-image
 
+        scott@hex:~/jumpnow/build$ ./oey.py boost
 
-#### Dependencies of iputils, tree format, three levels deep
-
-    ~/overo-oe$ ./oey.py -t -d3 iputils
-
-    Package [ iputils ] depends on
-            coreutils-native
-            docbook-utils-native
-                    autoconf-native
-                            m4-native
-                    automake-native
-                            perl-native-runtime
-                    docbook-dsssl-stylesheets-native
-                            sgml-common-native
-                    docbook-sgml-dtd-3.1-native
-                            sgml-common-native
-                    gnu-config-native
-                    help2man-native
-                    libtool-native
-                    linux-libc-headers-native
-                            unifdef-native
-                    openjade-native
-                            opensp-native
-                            sgml-common
-            sgmlspl-native
-                    linux-libc-headers-native
-                            unifdef-native
-                    perl-native
-                            gdbm-native
-                            virtual/db-native
-            virtual/arm-angstrom-linux-gnueabi-gcc
-            virtual/libc
-
-This shows the iputils dependency on openjade-native through the docbook
-dependency.
-
-Now see if any other packages require openjade.
-
-#### Reverse dependencies of openjade-native, flat format
-
-    ~/overo-oe$ ./oey.py -r openjade-native
-
-    Package [ openjade-native ] is needed by
-            docbook-utils-native
-            iputils
-            omap3-console-image
-            task-proper-tools
-
-Four packages depend on openjade, but now see if they are related.
-
-#### Reverse dependencies of openjade-native, tree format
-
-    ~/overo-oe$ ./oey.py -t -r openjade-native
-
-    Package [ openjade-native ] is needed by
-            docbook-utils-native
-                    iputils
-                            task-proper-tools
-                                    omap3-console-image
-
-
-So there really is only one dependency on openjade.
-
-
-Notes
--------
-
-The script is a quick hack, but occasionally useful.
-
-My big win with it was eliminating X completely from console builds, 
-something that had nagged me for awhile. And not just deployment elimination, 
-but no more X compiles at all during the build. I can now build a minimal
-console image from a clean OETMP in about 30 minutes, down from around one
-hour. 
-
-There are a plenty of things you could add to improve this script. 
-Wildcard matches would be a nice start.
-
+        Package [ boost ] depends on
+                boost-date-time
+                boost-dev
+                boost-filesystem
+                boost-graph
+                boost-iostreams
+                boost-native
+                boost-program-options
+                boost-regex
+                boost-signals
+                boost-system
+                boost-test
+                boost-thread
+                virtual/arm-poky-linux-gnueabi-compilerlibs
+                virtual/arm-poky-linux-gnueabi-gcc
+                virtual/libc
+                zlib
+                        zlib-dev
 
