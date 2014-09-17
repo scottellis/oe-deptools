@@ -1,32 +1,32 @@
- oe-deptools
-=============
+## oe-deptools
 
-Tools for working with OpenEmbedded.
+A few scripts for working with Yocto/OpenEmbedded and Linux.
 
+###  Installing
 
-  Installing
--------
-
-You can get oe-deptools with git:
+To install, clone the repo with git:
 
         git clone git://github.com/scottellis/oe-deptools.git
 
+You'll get two python scripts
 
-Installing is just a matter of copying the python script oey.py
-to a convenient location. 
+* oey.py
+* diffconfig.py
 
-The script is hard-coded to look for the data file in the current
-working directory so I just copy it to wherever I'm running builds.
+You can copy the scripts to a standard location in your path or just
+run them specifying the full path everytime (./oey.py <args>)
 
+###  oey.py
 
-  Help
--------
+Used to show dependencies for Yocto/OE packages.
+ 
+#####  Help
 
-        ./oey.py -h
+        oey.py -h
 
-        Usage: ./oey.py [options] [package]
+        Usage: oey.py [options] [package]
 
-        Displays OE build dependencies for a given package or recipe.
+        Displays dependencies for a given package or recipe.
         Uses the pn-depends.dot file for its raw data.
         Generate a pn-depends.dot file by running bitbake -g <recipe>.
 
@@ -45,52 +45,65 @@ working directory so I just copy it to wherever I'm running builds.
 
 
 
-  Generating Data
--------
+#####  Generating Data
 
 The oey.py script uses the dependency tree that bitbake generates with
-the --graphviz or -g option. 
+the `--graphviz` or `-g` option. 
 
 You can generate a dependency list for a particular package or a whole image
 at once. This doesn't take long even for an image recipe.
 
-        ~/jumpnow/build$ bitbake -g jumpnow-console-image
+        ~/overo/build$ bitbake -g console-image
 
 
-Three dot files will be generated - pn-depends.dot, task-depends.dot and
-package-depends.dot. 
+The following files will be generated in the *build* directory.
 
-The oey.py script uses the pn-depends.dot for its data.
+* package-depends.dot 
+* pn-buildlist
+* pn-depends.dot
+* task-depends.dot
+
+The `oey.py` script uses `pn-depends.dot` for its data.
+
+The script is hard-coded to look for the data file in the current
+working directory so you should run it from the directory where
+`pn-depends.dot` is located.
 
 
-  Example
--------
+#####  Example
 
-        scott@hex:~/jumpnow/build$ ./oey.py -r boost
+    scott@octo:~/overo/build$ oey.py openssl
 
-        Package [ boost ] is needed by
-                libzypp
-                        zypper
-                                jumpnow-console-image
+    Package [ openssl ] depends on
+            cryptodev-linux
+                    cryptodev-linux-dev
+            openssl-conf
+            openssl-dev
+            perl-native-runtime
+            pkgconfig-native
+                    autoconf-native
+                            m4-native
+                    automake-native
+                            perl-native-runtime
+                    gnu-config-native
+                            perl-native-runtime
+                    libtool-native
+            virtual/arm-poky-linux-gnueabi-compilerlibs
+            virtual/arm-poky-linux-gnueabi-gcc
+            virtual/libc
 
-        scott@hex:~/jumpnow/build$ ./oey.py boost
 
-        Package [ boost ] depends on
-                boost-date-time
-                boost-dev
-                boost-filesystem
-                boost-graph
-                boost-iostreams
-                boost-native
-                boost-program-options
-                boost-regex
-                boost-signals
-                boost-system
-                boost-test
-                boost-thread
-                virtual/arm-poky-linux-gnueabi-compilerlibs
-                virtual/arm-poky-linux-gnueabi-gcc
-                virtual/libc
-                zlib
-                        zlib-dev
+    scott@octo:~/overo/build$ oey.py -r openssl
+
+    Package [ openssl ] is needed by
+            git
+                    console-image
+            openssh
+                    packagegroup-core-ssh-openssh
+            python
+                    iotop
+                            console-image
+                    opkg-utils
+            wget
+                    console-image
 
