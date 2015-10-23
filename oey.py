@@ -10,12 +10,13 @@ rev_pn = {}
 
 show_parent_deps = False
 show_verbose_messages = False
+depends_file = 'pn-depends.dot'
 
 indent_str = '\t'
 
 def parse_pn_depends():
 	try:
-		fh = open('pn-depends.dot')
+		fh = open(depends_file)
 	except:
 		print 'File pn-depends.dot not found'
 		print 'Generate the file with bitbake -g <recipe>'
@@ -198,6 +199,7 @@ def usage():
 	print '-v\tShow error messages such as recursive dependencies'
 	print '-r\tShow reverse dependencies, i.e. packages dependent on package'
 	print '-f\tFlat output instead of default tree output'
+	print '-p\tUse package_depends.dot; pn-depends.dot by default'
 	print '-d <depth>\tMaximum depth to follow dependencies, default and max is 10'
 	print '-s\tShow child package dependencies that are already listed'
 	print '\tas direct parent dependencies.\n'
@@ -209,7 +211,7 @@ def usage():
 if __name__ == '__main__':
 
 	try:
-		opts, args = getopt.getopt(sys.argv[1:], 'hvrfd:s')
+		opts, args = getopt.getopt(sys.argv[1:], 'hvrfpd:s')
 
 	except getopt.GetoptError, err:
 		print str(err)
@@ -237,6 +239,9 @@ if __name__ == '__main__':
 
 		elif o in ('-s'):
 			show_parent_deps = True
+
+		elif o in ('-p'):
+			depends_file = 'package-depends.dot'
 
 		elif o in ('-d'):
 			try:
