@@ -27,14 +27,15 @@ Used to show dependencies for Yocto/OE packages.
         Usage: oey.py [options] [package]
 
         Displays dependencies for a given package or recipe.
-        Uses the pn-depends.dot file for its raw data.
-        Generate a pn-depends.dot file by running bitbake -g <recipe>.
+        Uses either pn-depends.dot or package-depends.dot for its raw data.
+        Generate the *.dot files by running bitbake -g <recipe>.
 
         Options:
         -h      Show this help message and exit
         -v      Show error messages such as recursive dependencies
         -r      Show reverse dependencies, i.e. packages dependent on package
         -f      Flat output instead of default tree output
+        -p      Use package-depends.dot; pn-depends.dot by default
         -d <depth>      Maximum depth to follow dependencies, default and max is 10
         -s      Show child package dependencies that are already listed
                 as direct parent dependencies.
@@ -63,11 +64,12 @@ The following files will be generated in the *build* directory.
 * pn-depends.dot
 * task-depends.dot
 
-The `oey.py` script uses `pn-depends.dot` for its data.
+The `oey.py` script uses either `pn-depends.dot` or `package-depends.dot`
+for its data.
 
 The script is hard-coded to look for the data file in the current
 working directory so you should run it from the directory where
-`pn-depends.dot` is located.
+`*.dot` file is located.
 
 
 #####  Example

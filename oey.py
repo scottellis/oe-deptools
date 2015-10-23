@@ -18,7 +18,7 @@ def parse_pn_depends():
 	try:
 		fh = open(depends_file)
 	except:
-		print 'File pn-depends.dot not found'
+		print 'File %s not found' % (depends_file)
 		print 'Generate the file with bitbake -g <recipe>'
 		sys.exit()	
 
@@ -192,19 +192,19 @@ def list_reverse_deps_flat(package, max_depth):
 def usage():
 	print '\nUsage: %s [options] [package]\n' % (sys.argv[0])
 	print 'Displays OE build dependencies for a given package or recipe.'
-	print 'Uses the pn-depends.dot file for its raw data.'
-	print 'Generate a pn-depends.dot file by running bitbake -g <recipe>.\n'
+	print 'Uses the pn-depends.dot or package-depends.dot file for raw data.'
+	print 'Generate the *.dot data files by running bitbake -g <recipe>.\n'
 	print 'Options:'
 	print '-h\tShow this help message and exit'
 	print '-v\tShow error messages such as recursive dependencies'
 	print '-r\tShow reverse dependencies, i.e. packages dependent on package'
 	print '-f\tFlat output instead of default tree output'
-	print '-p\tUse package_depends.dot; pn-depends.dot by default'
+	print '-p\tUse package-depends.dot; pn-depends.dot by default'
 	print '-d <depth>\tMaximum depth to follow dependencies, default and max is 10'
 	print '-s\tShow child package dependencies that are already listed'
 	print '\tas direct parent dependencies.\n'
-	print "Provide a package name from the generated pn-depends.dot file."
-	print 'Run the program without a package name to get a list of'
+	print "Provide the package name to analyze from the generated *.dot file."
+	print 'Run the program without a package name to get a list of all'
 	print 'available package names.\n'
 
 
